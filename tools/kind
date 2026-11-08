@@ -1,0 +1,6 @@
+#!/bin/bash
+# Wrapper for tools/kind.js: runs it as the report server does (its ./config, node 26).
+# From any account with sudo:  sudo -u unknown /home/unknown/ppsspp-report/tools/kind list
+cd "$(dirname "$0")/.." || exit 1
+source ./config || exit 1
+exec "${NODE:-/home/unknown/node-v26.13.0-linux-x64/bin/node}" tools/kind.js "$@"

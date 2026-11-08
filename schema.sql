@@ -1901,3 +1901,8 @@ BEGIN
 	SELECT v_result;
 END//
 delimiter ;
+
+
+-- 2026-11-08: kinds marked as noise; incoming messages of a blocked kind are dropped (lib/kinds.js, tools/kind).
+ALTER TABLE report_message_kinds
+ADD COLUMN blocked tinyint(1) unsigned NOT NULL DEFAULT 0;
