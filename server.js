@@ -7,6 +7,7 @@ var logs = require('./lib/logs/index');
 var compat = require('./lib/compat/index');
 var match = require('./lib/match/index');
 var uploads = require('./lib/uploads/index');
+var api = require('./lib/api/index');
 
 var ReportApp = function() {
     var self = this;
@@ -161,6 +162,7 @@ var ReportApp = function() {
 		compat.addRoutes(self);
 		match.addRoutes(self);
 		uploads.addRoutes(self);
+		api.addRoutes(self);
 	};
 
 	self.secureRoute = function (req, res, next)
