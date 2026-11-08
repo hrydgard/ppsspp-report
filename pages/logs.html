@@ -65,18 +65,6 @@
 	<script>
 		jQuery(function ($)
 		{
-			var dragstart = function (ev)
-			{
-				var selection = document.getSelection();
-				selection.removeAllRanges();
-				selection.selectAllChildren(this);
-
-				ev.preventDefault();
-			};
-
-			if (document.createRange && document.getSelection && document.getSelection().selectAllChildren)
-				$(".message-text").bind('dblclick', dragstart);
-
 			// TODO: Do this better.
 			if (document.location.href.indexOf('/kind/') != -1)
 				$('.message-text').each(function ()
