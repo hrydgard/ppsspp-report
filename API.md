@@ -20,7 +20,7 @@ PPSSPP builds (v1.19.0 and newer; older reports are dropped) send log messages w
 
 | Endpoint | What |
 |---|---|
-| `GET /kinds` | Kinds with unresolved messages (or per `status`): id, template, blocked, games |
+| `GET /kinds` | Kinds with unresolved messages (or per `status`): id, template, blocked, games. `min_version`: only kinds reported from that version or newer |
 | `GET /kinds/:id` | One kind and its message count |
 | `GET /kinds/:id/groups` | Distinct texts of a kind with games, messages, hits, latest report, most hits first; 100 per page (`page`, `next`) |
 | `GET /kinds/:id/messages` | Full messages, newest first: text, game, status, hits, first/latest report, and the 10 most recent versions, platforms, GPUs (with driver string) and CPUs, each with totals. `limit` (default 25, max 100), `next` link for the following page |
