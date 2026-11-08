@@ -36,7 +36,26 @@ Filters (kinds/:id/groups and kinds/:id/messages):
 | `status` | `new`, `resolved`, `reoccurring`, `any` |
 | `text` | exact message text (messages only); the `messages_url` of each group uses it |
 
-Errors are JSON `{"error": "..."}` with 400 (bad parameter), 404 (no such kind/message), 503 (query took over 10 s; narrow it down).
+## Writing: resolve
+
+`POST /api/v1/resolve` marks messages as fixed. It needs the shared secret: `Authorization: Bearer <secret>` (ask the server
+owner; it's `REPORT_API_SECRET` in the server's `config`). JSON body:
+
+| Field | Meaning |
+|---|---|
+| `kind` | required: kind id |
+| `version` | required: the version the fix is in, e.g. `v1.20.5`, or a dev build `v1.20.4-2100-gabcdef` |
+| `text` / `message` | optional: only messages with this exact text, or only this message id (not both) |
+| `dry_run` | optional `true`: only count, change nothing |
+
+Only open messages are touched (`new`, or `reoccurring` resolved at an older version). Messages already reported from a version
+**newer** than `version` are skipped and counted in `skipped_seen_in_newer_version`: the fix evidently didn't cover them. A resolved
+message that is reported again from `version` or newer becomes `reoccurring` automatically, and shows up in the default lists again.
+
+    curl -X POST https://report.ppsspp.org/api/v1/resolve -H "Authorization: Bearer $SECRET" -H 'Content-Type: application/json' \
+         -d '{"kind": 967, "version": "v1.20.5", "dry_run": true}'
+
+Errors are JSON `{"error": "..."}` with 400 (bad parameter), 401 (missing or wrong secret), 404 (no such kind/message), 503 (query took over 10 s, or writes not enabled).
 
 ## Example: shader compile/link failures
 
