@@ -1906,3 +1906,14 @@ delimiter ;
 -- 2026-11-08: kinds marked as noise; incoming messages of a blocked kind are dropped (lib/kinds.js, tools/kind).
 ALTER TABLE report_message_kinds
 ADD COLUMN blocked tinyint(1) unsigned NOT NULL DEFAULT 0;
+
+
+-- 2026-11-08: indexes for the log lists and grouped view; dropped ones nothing read (performance_schema, 10 days).
+ALTER TABLE report_messages ADD INDEX `id_msg_kind-status-hash` (id_msg_kind, status, formatted_hash, id_game);
+ALTER TABLE report_message_platforms ADD INDEX `id_platform-id_msg` (id_platform, id_msg);
+ALTER TABLE report_message_cpus ADD INDEX `id_cpu-id_msg` (id_cpu, id_msg);
+ALTER TABLE report_message_gpus ADD INDEX `id_gpu-id_msg` (id_gpu, id_msg);
+ALTER TABLE report_messages DROP INDEX `id_msg_kind`, DROP INDEX `status`;
+ALTER TABLE report_message_configs DROP INDEX `id_config-latest_report`;
+ALTER TABLE report_compatibility DROP INDEX `id_config`;
+ALTER TABLE versions DROP INDEX `value`, DROP INDEX `title-id_version`;
