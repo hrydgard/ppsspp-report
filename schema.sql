@@ -1917,3 +1917,74 @@ ALTER TABLE report_messages DROP INDEX `id_msg_kind`, DROP INDEX `status`;
 ALTER TABLE report_message_configs DROP INDEX `id_config-latest_report`;
 ALTER TABLE report_compatibility DROP INDEX `id_config`;
 ALTER TABLE versions DROP INDEX `value`, DROP INDEX `title-id_version`;
+
+
+-- 2026-11-08: resolve/ignore with fixed-in version title, note and time; create_report_message2 reopens at the fixed build
+-- itself, and reopens 'ignored' messages only when they were ignored as of a version.  Instant (metadata-only) changes.
+ALTER TABLE report_messages
+	MODIFY COLUMN status enum('new', 'resolved', 'reoccurring', 'ignored') NOT NULL DEFAULT 'new',
+	ADD COLUMN resolved_version varchar(32) CHARACTER SET latin1 NOT NULL DEFAULT '' COMMENT 'Fixed-in version as given (resolved_version_value is its numeric value).',
+	ADD COLUMN resolve_note varchar(1024) NOT NULL DEFAULT '',
+	ADD COLUMN resolved_at datetime NULL DEFAULT NULL,
+	ALGORITHM=INSTANT;
+
+DROP PROCEDURE IF EXISTS create_report_message2;
+delimiter //
+CREATE DEFINER=CURRENT_USER PROCEDURE create_report_message2 (
+	a_id_msg_kind int(10) unsigned,
+	a_id_game char(18) CHARACTER SET latin1,
+	a_formatted_message varchar(4096),
+	a_id_version int(10) unsigned
+)
+BEGIN
+	DECLARE v_id_msg int(10) unsigned;
+	DECLARE v_status enum('new', 'resolved', 'reoccurring', 'ignored');
+	DECLARE v_formatted_hash binary(20) DEFAULT UNHEX(SHA1(a_formatted_message));
+	DECLARE v_version_value int(10) unsigned;
+	DECLARE v_resolved_value int(10) unsigned;
+
+	SELECT id_msg, status, resolved_version_value
+	INTO v_id_msg, v_status, v_resolved_value
+	FROM report_messages
+	WHERE id_msg_kind = a_id_msg_kind
+		AND id_game = a_id_game
+		AND formatted_hash = v_formatted_hash
+		AND formatted_message = a_formatted_message
+	LIMIT 1;
+
+	-- Resolved: reopen when reported from the fixed-in version or newer.  Ignored: only if it was ignored as of a version.
+	IF v_status = 'resolved' OR (v_status = 'ignored' AND v_resolved_value > 0) THEN
+		SET v_version_value = (
+			SELECT value
+			FROM versions
+			WHERE id_version = a_id_version
+			LIMIT 1
+		);
+
+		IF v_version_value >= v_resolved_value THEN
+			UPDATE report_messages
+			SET status = 'reoccurring'
+			WHERE id_msg = v_id_msg
+				AND status = v_status
+				AND resolved_version_value <= v_version_value
+			LIMIT 1;
+		END IF;
+	ELSEIF v_id_msg IS NULL THEN
+		INSERT IGNORE INTO report_messages
+			(id_msg_kind, id_game, formatted_hash, formatted_message)
+		VALUES (a_id_msg_kind, a_id_game, v_formatted_hash, a_formatted_message);
+
+		SET v_id_msg = (
+			SELECT id_msg
+			FROM report_messages
+			WHERE id_msg_kind = a_id_msg_kind
+				AND id_game = a_id_game
+				AND formatted_hash = v_formatted_hash
+				AND formatted_message = a_formatted_message
+			LIMIT 1
+		);
+	END IF;
+
+	SELECT v_id_msg;
+END//
+delimiter ;
