@@ -1,0 +1,61 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>		<html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>		<html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>PPSSPP Reporting: Reported Messages</title>
+	<link rel="stylesheet" href="/css/style.min.css">
+	<link rel="stylesheet" href="/css/logs.min.css">
+	<script src="/js/libs/modernizr-2.5.3-respond-1.1.0.min.js"></script>
+</head>
+<body>
+	<div class="navbar navbar-fixed-top"><div class="navbar-inner"><div class="container">
+		<a class="brand" href="//www.ppsspp.org/index.html">PPSSPP</a>
+		<div class="nav">
+			<ul class="nav">
+				<li><a href="/">Reporting Home</a></li>
+				<li><a href="/games">Games</a></li>
+				<li class="active"><a href="/logs">Logs</a></li>
+			</ul>
+		</div>
+	</div></div></div>
+	<div class="container report-ppsspp-org" id="page-reporting-logs">
+		<h2 class="page-title"></h2>
+		<p class="list-summary"></p>
+
+		<table id="reporting-logs-table">
+			<tr>
+				<th>Message</th>
+				<th># of games</th>
+				<th title="Messages stored with this text (one per game)">Rows</th>
+				<th title="Reports of this text, summed over versions (each version's counter stops at 65,535)">Hits</th>
+				<th>Latest Report</th>
+			</tr>
+			<tr class="groups">
+				<td class="message"><a href="" class="message-text"></a></td>
+				<td class="title games-text"></td>
+				<td class="title messages-text"></td>
+				<td class="title hits-text"></td>
+				<td class="latest_report-text"></td>
+			</tr>
+		</table>
+		<p class="paging-holder"></p>
+	</div>
+
+	<div class="container">
+		<hr />
+		<footer>
+			 <p>&copy; PPSSPP Project 2012-2021. PSP is a trademark of Sony, Inc.</p>
+			 <p><a href="//www.ppsspp.org/privacy.html">Privacy Policy</a></p>
+		</footer>
+	</div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="/js/libs/jquery-1.7.2.min.js"><\/script>')</script>
+
+	<script src="/js/common.min.js"></script>
+</body>
+</html>
