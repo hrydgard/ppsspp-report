@@ -8,6 +8,7 @@ var compat = require('./lib/compat/index');
 var match = require('./lib/match/index');
 var uploads = require('./lib/uploads/index');
 var api = require('./lib/api/index');
+var stats = require('./lib/stats');
 
 var ReportApp = function() {
     var self = this;
@@ -63,7 +64,7 @@ var ReportApp = function() {
            // Save the last minute of ingest counters first (at most 3 seconds).
            const exit = () => process.exit(1);
            setTimeout(exit, 3000).unref();
-           require('./lib/stats').flush().then(exit, exit);
+           stats.flush().then(exit, exit);
            return;
         }
         console.log('%s: Node server stopped.', Date(Date.now()) );
