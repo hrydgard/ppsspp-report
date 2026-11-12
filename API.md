@@ -42,7 +42,7 @@ Lists default to `new` + `reoccurring`, so resolved and ignored messages drop ou
 | `GET /kinds/:id/messages` | Full messages, newest first: text, game, status details, hits, first/latest report, `latest_version`, and the 10 most recent versions, platforms, GPUs (with driver string) and CPUs, each with totals. `limit` (default 25, max 100), `next` link for the following page |
 | `GET /messages/:id` | One message with everything, plus the PPSSPP settings of the 3 most recent configs it was reported with |
 | `GET /messages/:id/reports` | The message's individual reports, newest first (see below). `before` cursor, `next` link |
-| `GET /reports` | The newest individual reports of all messages as they came in, repeats included; each also has `kind`, `game`, `text_start` (first 400 characters) and `status` |
+| `GET /reports` | The newest individual reports of all messages as they came in, repeats included; each also has `kind`, `game`, `text_start` (first 400 characters) and `status`. Only open (new/reoccurring) messages of kinds that aren't blocked, unless `all=1` |
 | `GET /stats` | Ingest counters: per hour and outcome, how many reports were stored or dropped and why; `versions`: incoming reports per PPSSPP version, counted before dropping, over 1/7/30 days |
 
 Filters (`/kinds/:id/groups` and `/kinds/:id/messages`):
@@ -61,7 +61,8 @@ Filters (`/kinds/:id/groups` and `/kinds/:id/messages`):
 ### Individual reports
 
 Since 2026-11-12 every stored report is also kept on its own, the newest 100 per message (the counters above still count all
-of them). Each has `reported_at`, `version`, `platform`, `gpu`, `cpu`, `settings` (non-default PPSSPP settings), and what the app
+of them). Each has `reported_at`, `version`, `platform`, `gpu`, `cpu`, `settings` (the PPSSPP settings the app reported; a few old ones are left out at their defaults), `settings_changed`
+(the ones that differ from PPSSPP's defaults, `{value, default}`; lib/configdefaults.js), and what the app
 sent with it: `seconds_played` (emulated seconds since the game booted; newer builds), `ticks` (emulated CPU cycles, a string),
 `fps`, `vps`, `savestate_used`, `pixel_width`/`pixel_height`, `sdkver`, `module_ver`, `firmware`, `file_type`, `disc_container`,
 `os`, `os_build`, `device_model`. Fields a build doesn't send are `null` or `""`. Same data in HTML: `/logs/message/:id`
