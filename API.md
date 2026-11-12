@@ -43,7 +43,7 @@ Lists default to `new` + `reoccurring`, so resolved and ignored messages drop ou
 | `GET /messages/:id` | One message with everything, plus the PPSSPP settings of the 3 most recent configs it was reported with |
 | `GET /messages/:id/reports` | The message's individual reports, newest first (see below). `before` cursor, `next` link |
 | `GET /reports` | The newest individual reports of all messages as they came in, repeats included; each also has `kind`, `game`, `text_start` (first 400 characters) and `status` |
-| `GET /stats` | Ingest counters: per hour and outcome, how many reports were stored or dropped and why |
+| `GET /stats` | Ingest counters: per hour and outcome, how many reports were stored or dropped and why; `versions`: incoming reports per PPSSPP version, counted before dropping, over 1/7/30 days |
 
 Filters (`/kinds/:id/groups` and `/kinds/:id/messages`):
 

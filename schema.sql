@@ -2027,3 +2027,12 @@ CREATE TABLE IF NOT EXISTS report_stats (
 	count int(10) unsigned NOT NULL DEFAULT 0,
 	PRIMARY KEY (hour, type, outcome)
 ) ENGINE=InnoDB DEFAULT CHARSET=ascii;
+
+-- 2026-11-12: incoming reports per day and PPSSPP version, counted before anything is dropped (lib/stats.js; /stats).
+CREATE TABLE IF NOT EXISTS report_version_stats (
+	day date NOT NULL COMMENT 'UTC',
+	type varchar(16) CHARACTER SET ascii NOT NULL COMMENT 'message or compat',
+	version varchar(32) CHARACTER SET ascii NOT NULL COMMENT 'As sent, cut to 32 characters; (none) if missing',
+	count int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (day, type, version)
+) ENGINE=InnoDB DEFAULT CHARSET=ascii;
