@@ -1988,3 +1988,42 @@ BEGIN
 	SELECT v_id_msg;
 END//
 delimiter ;
+
+
+-- 2026-11-12: individual message reports, the newest 100 per message (lib/logs/reports.js; /logs/message/:id, /logs/all), and
+-- ingest counters per hour and outcome (lib/stats.js; /stats).  New tables only.
+CREATE TABLE IF NOT EXISTS report_message_reports (
+	id_report int(10) unsigned NOT NULL AUTO_INCREMENT,
+	id_msg int(10) unsigned NOT NULL,
+	reported_at datetime NOT NULL,
+	id_version int(10) unsigned NOT NULL,
+	id_platform mediumint(8) unsigned NOT NULL,
+	id_gpu mediumint(8) unsigned NOT NULL,
+	id_cpu mediumint(8) unsigned NOT NULL,
+	id_config int(10) unsigned NOT NULL,
+	ticks bigint(20) unsigned NULL DEFAULT NULL COMMENT 'Emulated CPU cycles since boot',
+	seconds_played double NULL DEFAULT NULL COMMENT 'Emulated seconds since boot',
+	fps float NULL DEFAULT NULL,
+	vps float NULL DEFAULT NULL,
+	savestate_used tinyint(1) unsigned NULL DEFAULT NULL,
+	pixel_width smallint(5) unsigned NULL DEFAULT NULL,
+	pixel_height smallint(5) unsigned NULL DEFAULT NULL,
+	sdkver int(10) unsigned NULL DEFAULT NULL,
+	module_ver int(11) NULL DEFAULT NULL,
+	firmware varchar(16) NOT NULL DEFAULT '',
+	file_type varchar(24) NOT NULL DEFAULT '',
+	disc_container varchar(8) NOT NULL DEFAULT '',
+	os varchar(24) NOT NULL DEFAULT '',
+	os_build varchar(24) NOT NULL DEFAULT '',
+	device_model varchar(48) NOT NULL DEFAULT '',
+	PRIMARY KEY (id_report),
+	KEY `id_msg-id_report` (id_msg, id_report)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS report_stats (
+	hour datetime NOT NULL COMMENT 'UTC, start of the hour',
+	type varchar(16) CHARACTER SET ascii NOT NULL COMMENT 'message or compat',
+	outcome varchar(32) CHARACTER SET ascii NOT NULL,
+	count int(10) unsigned NOT NULL DEFAULT 0,
+	PRIMARY KEY (hour, type, outcome)
+) ENGINE=InnoDB DEFAULT CHARSET=ascii;

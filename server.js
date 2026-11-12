@@ -60,7 +60,11 @@ var ReportApp = function() {
         if (typeof sig === "string") {
            console.log('%s: Received %s - terminating app ...',
                        Date(Date.now()), sig);
-           process.exit(1);
+           // Save the last minute of ingest counters first (at most 3 seconds).
+           const exit = () => process.exit(1);
+           setTimeout(exit, 3000).unref();
+           require('./lib/stats').flush().then(exit, exit);
+           return;
         }
         console.log('%s: Node server stopped.', Date(Date.now()) );
     };
